@@ -1,0 +1,215 @@
+{
+  "id": "3191c70c-f4e9-4970-aa48-57eb54e44138",
+  "revision": 0,
+  "last_node_id": 11,
+  "last_link_id": 36,
+  "nodes": [
+    {
+      "id": 3,
+      "type": "SaveAudio",
+      "pos": [
+        700,
+        310
+      ],
+      "size": [
+        270,
+        112
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 2
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.75",
+        "Node name for S&R": "SaveAudio"
+      },
+      "widgets_values": [
+        "audio/ComfyUI"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "Note",
+      "pos": [
+        -990,
+        310
+      ],
+      "size": [
+        660,
+        440
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "你需要将用户输入的“普通对话文本”或“粗糙的剧本”，转化为符合 VoxCPM 多角色生成节点要求的**“高级内联控制脚本”**。你需要精准把控每个角色的音色、情绪，并自然地插入音效或语气词，最终输出极其生动、可以直接用于生成的底层代码格式。\n\n⚙️ 核心输出格式规范\n脚本必须由两种标签交替组成，绝对不允许出现任何其他说明性文字：\n\n[ctrl] 控制标签：用于定义紧接着说话的角色的声音和情绪。\n用完即焚机制：[ctrl] 只对其下方紧跟的第一句 [spkX] 或 [spk] 生效。如果换人说话或情绪改变，必须重新打 [ctrl] 标签。\n[spkX] 角色标签：用于指定当前是几号角色（如 [spk1], [spk2]，最多支持 10 个角色），标签后紧跟该角色要说的台词。\n\n🧠 撰写 3 大核心法则\n法则 1：控制指令万能公式（写在 [ctrl] 后）\n所有角色（无论是否有编号）的控制指令，都必须且只能写在 [ctrl] 后，并严格遵循以下公式：\n\n【公式】：年龄/性别 + 音色质感 + 语速/节奏 + 情绪/画面感\n\n大白话原则：无需任何括号，像和真人配音员沟通一样，全部使用标准普通话设定。\n克制平稳原则（核心避坑）：抓准核心特征，切忌长篇大论。\n禁用极端词汇：绝对不要使用“极快”、“暴躁”、“极度”等夸张字眼。\n使用温和修饰：请使用“较快”、“稍显”、“带着一丝”等克制表达，让 AI 演绎更自然。\n连贯一致原则（情绪过渡）：同角色情绪需保持连贯，拒绝突兀割裂。只有剧情需要时才按需平滑过渡。\n\n✅ 正确示例：[ctrl] 粗犷的中年男性，声音低沉沙哑，语速较快，带着明显的不满和质问。\n\n法则 2：画龙点睛的“音效修饰”（写在 [spkX] 的台词中）\n为了打破 AI 的机械感，可以在台词文本中巧妙自然地加入拟声修饰。\n\n⚠️ 铁律 1：位置限定。 无论是中文拟声字还是音效标签，只能放在 [spkX] 或 [spk] 的台词文本中，绝对不能放在 [ctrl] 里！\n⚠️ 铁律 2：优先使用中文文字。 优先使用中文拟声汉字（如：啊、哎、唉、呃、嗯、哈哈），能让语感最自然。英文半角标签仅作为偶尔的点缀，不可滥用。\n⚠️ 铁律 3：拟声绝对不叠加（核心避坑）。 英文音效标签自带发音，绝对不能和台词中的同类拟声汉字连用，否则会发两次声，极度违和！\n\n❌ 错误：[Surprise-ah] 哎？全错了吗？ 或 [laughing] 哈哈，原来是你。\n✅ 正确（留标签去汉字）：[Surprise-ah] 全错了吗？\n✅ 正确（留汉字去标签，最推荐）：哎？全错了吗？ / 哈哈，原来是你。\n\n【偶尔点缀的可用英文标签库】：\n\n😆 笑声/叹气： [laughing]、[sigh]\n🤫 停顿/思考： [Uhm]、[Shh]\n❓ 疑问/确认： [Question-ah]、[Question-ei]、[Question-en]、[Question-oh]、[Confirmation-en]\n❗ 惊讶/情绪： [Surprise-wa]、[Surprise-yo]、[Surprise-ah]、[Surprise-oh]、[Dissatisfaction-hnn]\n\n法则 3：独立编排逻辑\n同一角色连续说话但情绪大变时，中间需插入新 [ctrl] 改变情绪。\n\n台词保持极其自然、生活化的标准普通话口语表达。\n\n🚀 启动指令\n你已清楚所有规则。请回复“我已准备好，请发送您的原始剧本。”，并在之后的所有交互中，仅输出转换后的 [ctrl] 和 [spkX] 代码块，不要包含任何多余的解释。"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 4,
+      "type": "voxcpm_nkxx_unified_generator",
+      "pos": [
+        380,
+        290
+      ],
+      "size": [
+        250,
+        478
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "参考音频",
+          "name": "reference_audio",
+          "type": "AUDIO",
+          "link": 36
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "voxcpm_nkxx_unified_generator"
+      },
+      "widgets_values": [
+        "VoxCPM2",
+        "极致克隆",
+        "青年男性，声音粗犷，语速较快，带着一丝烦躁和不屑。",
+        "你别自己吓自己行不行？哪来的脚步声，明明就是风吹窗户的声音。",
+        3,
+        true,
+        2,
+        10,
+        597238857888799,
+        "randomize",
+        "中文",
+        "None",
+        false,
+        true,
+        "",
+        true,
+        true,
+        true,
+        "{\"VoxCPM2\": {\"architecture\": \"voxcpm2\"}, \"VoxCPM-0.5B\": {\"architecture\": \"voxcpm\"}, \"VoxCPM1.5\": {\"architecture\": \"voxcpm\"}}"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "LoadAudio",
+      "pos": [
+        100,
+        60
+      ],
+      "size": [
+        270,
+        136
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            36
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.75",
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "年轻女性，温柔自然；[sigh] 第十版方案又被打回来了。[cough] 连熬了三个通宵，嗓子都说不出话了，这日子什么时候是个头啊。.wav",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 7,
+      "type": "PrimitiveStringMultiline",
+      "pos": [
+        -300,
+        280
+      ],
+      "size": [
+        470,
+        200
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.75",
+        "Node name for S&R": "PrimitiveStringMultiline"
+      },
+      "widgets_values": [
+        "[ctrl] 年轻男性，声音刻意压低，语速稍快，带着神秘和八卦的兴奋感。\n[spk1] 你听说了吗？市场部那个新来的总监，好像和咱们老板是亲戚。\n[ctrl] 年轻女性，声音清亮，语速较快，带着明显的惊讶和好奇。\n[spk2] [Surprise-wa] 真的假的？我昨天还看他在会上被老板骂得狗血淋头呢。\n[ctrl] 年轻男性，声音压低，语速平稳，带着一副看透一切的笃定。\n[spk1] 嗨，那都是做给外人看的。有人看到他们周末一起去打高尔夫了，关系可亲密了。\n[ctrl] 年轻女性，声音清亮，语速平缓，带着恍然大悟的感觉。\n[spk2] [Confirmation-en] 原来是这样啊。难怪他刚来一个月就接手了那么大的项目。"
+      ]
+    }
+  ],
+  "links": [
+    [
+      2,
+      4,
+      0,
+      3,
+      0,
+      "AUDIO"
+    ],
+    [
+      36,
+      9,
+      0,
+      4,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.6830134553650705,
+      "offset": [
+        1123.2428945508443,
+        481.3651138988598
+      ]
+    },
+    "frontendVersion": "1.30.6"
+  },
+  "version": 0.4
+}

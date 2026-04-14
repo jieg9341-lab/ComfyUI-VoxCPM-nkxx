@@ -498,6 +498,8 @@ class VoxCPM_Unified_Generator:
         req.update(
             {
                 "target_text": ("STRING", {"default": "欢迎使用 VoxCPM 全能语音节点。", "multiline": True}),
+                # 【修改点】：将 speaker_count 移入 required 区域，物理层面上紧邻目标文本
+                "speaker_count": ("INT", {"default": 2, "min": 1, "max": 10, "step": 1}),
                 "show_advanced": ("BOOLEAN", {"default": False}),
                 "cfg_value": ("FLOAT", {"default": 2.0, "min": 0.1, "max": 5.0, "step": 0.1}),
                 "inference_steps": ("INT", {"default": 10, "min": 1, "max": 50, "step": 1}),
@@ -509,7 +511,6 @@ class VoxCPM_Unified_Generator:
             "required": req,
             "optional": {
                 "ui_language": (["中文", "English"], {"default": "中文"}),
-                "speaker_count": ("INT", {"default": 2, "min": 1, "max": 10, "step": 1}),
                 "lora_name": (_list_lora_files(),),
                 "force_offload": (
                     "BOOLEAN",
@@ -553,7 +554,6 @@ class VoxCPM_Unified_Generator:
             return generate_kwargs
 
         if effective_mode == "可控克隆":
-            # [核心修改]: 允许不连接参考音频，若未连接则退化为声音设计
             if ref_audio_path:
                 generate_kwargs["reference_wav_path"] = ref_audio_path
             return generate_kwargs
@@ -777,8 +777,6 @@ class VoxCPM_Unified_Generator:
                         pass
 
             if force_offload:
-                # The node instance also holds a strong reference to the loaded model.
-                # Drop it before clearing the global cache so CUDA memory can be released.
                 self.current_model = None
                 gc.collect()
                 force_unload_model()

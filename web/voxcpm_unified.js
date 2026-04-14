@@ -25,38 +25,6 @@ function getWidget(node, name) {
     return node.widgets?.find((widget) => widget.name === name);
 }
 
-function moveWidgetBefore(node, widgetName, beforeWidgetName) {
-    if (!node.widgets) {
-        return;
-    }
-
-    const fromIndex = node.widgets.findIndex((widget) => widget.name === widgetName);
-    const toIndex = node.widgets.findIndex((widget) => widget.name === beforeWidgetName);
-    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex || fromIndex === toIndex - 1) {
-        return;
-    }
-
-    const [widget] = node.widgets.splice(fromIndex, 1);
-    const insertIndex = node.widgets.findIndex((item) => item.name === beforeWidgetName);
-    node.widgets.splice(insertIndex, 0, widget);
-}
-
-function moveWidgetAfter(node, widgetName, afterWidgetName) {
-    if (!node.widgets) {
-        return;
-    }
-
-    const fromIndex = node.widgets.findIndex((widget) => widget.name === widgetName);
-    const anchorIndex = node.widgets.findIndex((widget) => widget.name === afterWidgetName);
-    if (fromIndex === -1 || anchorIndex === -1 || fromIndex === anchorIndex || fromIndex === anchorIndex + 1) {
-        return;
-    }
-
-    const [widget] = node.widgets.splice(fromIndex, 1);
-    const insertIndex = node.widgets.findIndex((item) => item.name === afterWidgetName);
-    node.widgets.splice(insertIndex + 1, 0, widget);
-}
-
 function parseModelProfiles(rawValue) {
     try {
         return JSON.parse(rawValue || "{}");
@@ -118,6 +86,7 @@ function getModeOptions(modelArch, isZh) {
     return getSupportedModes(modelArch).map((modeZh) => toDisplayMode(modeZh, isZh));
 }
 
+// 恢复为最基础稳定的显隐逻辑，不再干预输入类型和进行 Hack 伪装
 function toggleWidget(widget, show, defaultType = "custom") {
     if (!widget) {
         return;
@@ -268,7 +237,15 @@ app.registerExtension({
             const modelProfiles = parseModelProfiles(wModelProfiles?.value);
             const modelName = wModel ? wModel.value : "";
             const modelArch = inferModelArchitecture(modelName, modelProfiles);
-            const currentSpkCount = wSpkCount ? parseInt(wSpkCount.value, 10) : 2;
+            
+            let currentSpkCount = 2;
+            if (wSpkCount) {
+                currentSpkCount = parseInt(wSpkCount.value, 10);
+                if (isNaN(currentSpkCount) || currentSpkCount < 1) {
+                    currentSpkCount = 2;
+                }
+            }
+
             const autoAsrVal = wAutoAsr ? wAutoAsr.value : true;
             const isAdv = wShowAdv ? wShowAdv.value : false;
             const currentLang = wLang ? wLang.value : "中文";
@@ -289,7 +266,6 @@ app.registerExtension({
                 return;
             }
 
-            // 【核心】：在执行任何显示/隐藏逻辑前，先获取当前的结构化最小高度
             const oldMinHeight = this.computeSize()[1];
 
             this._lastMode = mappedMode;
@@ -373,12 +349,6 @@ app.registerExtension({
             const needsPromptText = mappedMode === "极致克隆" || mappedMode === "常规克隆";
             const usesControl = modelArch === "voxcpm2" && (mappedMode === "声音设计" || mappedMode === "可控克隆");
 
-            if (isMulti) {
-                moveWidgetBefore(this, "speaker_count", "show_advanced");
-            } else {
-                moveWidgetAfter(this, "speaker_count", "show_advanced");
-            }
-
             toggleWidget(wModelProfiles, false, "hidden");
             toggleWidget(wControlInstr, usesControl, "customtext");
             toggleWidget(wSpkCount, isMulti, "number");
@@ -431,9 +401,7 @@ app.registerExtension({
                 });
             }
 
-            // 【核心】：逻辑执行完毕后，再次获取结构化最小高度
             const newMinHeight = this.computeSize()[1];
-            // 计算由于隐藏/显示控件导致的高度差额（例如收起高级选项，差额就是负的几十像素）
             const heightDiff = newMinHeight - oldMinHeight;
 
             let useHeightDiff = true;
@@ -442,10 +410,9 @@ app.registerExtension({
             }
 
             if (useHeightDiff) {
-                // 让当前节点总高度精确地增减这个差额，完美抵消收起时多出的空隙
                 this.setSize([this.size[0], Math.max(newMinHeight, this.size[1] + heightDiff)]);
             } else {
-                // 如果是从工作流加载恢复的初始状态，直接信任保存的高度，不累加差额
+                // 【修复】：在初次加载/切换工作流时，不仅托底最小高度，同时尊重并保留保存下来的更高尺寸
                 this.setSize([this.size[0], Math.max(newMinHeight, this.size[1])]);
             }
 
@@ -458,6 +425,7 @@ app.registerExtension({
                 onDrawBackground.apply(this, arguments);
             }
 
+            // 恢复最原始的稳定检测逻辑，去除了所有画板操作检测
             const autoAsr = getWidget(this, "auto_asr");
             if (autoAsr && this._lastAutoAsr !== autoAsr.value) {
                 this.applyVisibility(true);
