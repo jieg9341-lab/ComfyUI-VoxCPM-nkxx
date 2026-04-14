@@ -1,5 +1,7 @@
 # ComfyUI VoxCPM 全能语音与训练套件 (ComfyUI VoxCPM Unified Suite)
 
+[**English**](README_EN.md) | [**中文简体**](README.md)
+
 这是一个专为 ComfyUI 设计的 **VoxCPM** 全功能扩展节点。它不仅提供强大的语音生成功能，还在 ComfyUI 中实现了从“长音频自动切片打标”到“LoRA 模型训练”的一站式全自动工作流。
 
 👨‍💻 **作者 B站主页**：[点击这里关注我，获取更多教程和更新](https://space.bilibili.com/3546882187987924?spm_id_from=333.1007.0.0)
@@ -22,7 +24,7 @@
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone <你的GitHub仓库链接>
+git clone https://github.com/jieg9341-lab/ComfyUI-VoxCPM-nkxx
 ```
 
 *提示：初次运行节点时，`__init__.py` 会自动检测并尝试安装所需的 Python 依赖。*
@@ -34,7 +36,7 @@ git clone <你的GitHub仓库链接>
 #### 🪟 Windows 用户
 
 **方法一：一键安装脚本（强烈推荐）**
-我们为你准备了**一键安装脚本**！只需双击运行本插件目录下的 `一键安装模型.bat`。脚本会自动识别你是否使用的是便携版 Python 环境（如秋叶整合包），并自动为你创建目录结构、拉取全系列 VoxCPM 模型以及所需的 ASR/降噪辅助模型，实现**真正的一键部署**。
+我们为你准备了**一键安装脚本**！只需双击运行本插件目录下的 `install_models.bat`。脚本会自动识别你是否使用的是便携版 Python 环境（如秋叶整合包），并自动为你创建目录结构、拉取全系列 VoxCPM 模型以及所需的 ASR/降噪辅助模型，实现**真正的一键部署**。
 
 **方法二：手动命令行安装**
 如果你不想使用一键脚本，也可以手动打开命令提示符（便携包用户请在整合包提供的控制台/Python 环境下执行）。请确保命令行当前路径在 **ComfyUI 的根目录**（即包含 `main.py` 的文件夹）下，执行以下命令：
