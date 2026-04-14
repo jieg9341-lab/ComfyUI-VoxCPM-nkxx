@@ -1,0 +1,12 @@
+# Core runtime
+voxcpm
+funasr
+safetensors
+soundfile
+
+# Training
+argbind
+datasets
+transformers
+librosa
+tensorboardX
