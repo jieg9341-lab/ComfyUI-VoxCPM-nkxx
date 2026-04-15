@@ -145,6 +145,7 @@ const TRAINER_EN = {
 const PREPARER_MODES = {
     "长音频": { zh: "长音频", en: "Long Audio" },
     "数据集目录": { zh: "数据集目录", en: "Dataset Directory" },
+    "批量音频": { zh: "批量音频", en: "Batch Audio" }, // 新增批量音频模式支持
 };
 
 // ==================== 数据集准备节点逻辑 ====================
@@ -196,6 +197,8 @@ function setupPreparerNode(nodeType, app) {
         let internalMode = "长音频";
         if (wMode.value === "数据集目录" || wMode.value === "Dataset Directory") {
             internalMode = "数据集目录";
+        } else if (wMode.value === "批量音频" || wMode.value === "Batch Audio") { // 处理批量音频
+            internalMode = "批量音频";
         }
 
         if (this._lastMode === internalMode && this._lastLang === currentLang) return;
@@ -207,7 +210,8 @@ function setupPreparerNode(nodeType, app) {
 
         this.title = isZh ? "VoxCPM 数据集准备" : "VoxCPM Dataset Preparer";
 
-        wMode.options.values = isZh ? ["长音频", "数据集目录"] : ["Long Audio", "Dataset Directory"];
+        // 添加批量音频到下拉菜单选项中
+        wMode.options.values = isZh ? ["长音频", "数据集目录", "批量音频"] : ["Long Audio", "Dataset Directory", "Batch Audio"];
         wMode.value = isZh ? PREPARER_MODES[internalMode].zh : PREPARER_MODES[internalMode].en;
 
         this.widgets.forEach(widget => {
@@ -215,9 +219,9 @@ function setupPreparerNode(nodeType, app) {
             if (label) setWidgetText(widget, label);
         });
 
-        // 长音频模式下隐藏递归扫描
+        // 长音频模式下隐藏递归扫描，数据集和批量音频显示
         const wRecursive = getWidget(this, "递归扫描");
-        const showRecursive = internalMode === "数据集目录";
+        const showRecursive = internalMode === "数据集目录" || internalMode === "批量音频";
         toggleWidget(wRecursive, showRecursive, "toggle");
 
         const newMinHeight = this.computeSize()[1];
